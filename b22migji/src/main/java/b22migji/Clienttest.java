@@ -42,6 +42,7 @@ public class Clienttest {
 		login.put("name", name);
 		socket.send(login.toString());
 		byte[] ticket = socket.recv();
+		System.out.println("hello");
 		
 		return new String(ticket, ZMQ.CHARSET);
 		
