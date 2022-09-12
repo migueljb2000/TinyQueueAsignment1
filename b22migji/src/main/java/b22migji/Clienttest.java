@@ -4,6 +4,9 @@ import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
+
+import java.util.Scanner;
+
 import org.json.*;
 
 public class Clienttest {
@@ -12,10 +15,12 @@ public class Clienttest {
 		if (args.length > 0) {
 			try (ZContext context = new ZContext()){
 				Socket socket = context.createSocket(SocketType.DEALER);
-				
-				System.out.println(joinqueue(socket, args, "miguel"));
+				System.out.println("Enter the login name");
+				Scanner s = new Scanner(System.in);
+				String name = s.nextLine();
+				System.out.println(joinqueue(socket, args, name));
 				System.out.println(subscribe(socket, args));
-				//heartbeat(socket, args);
+				heartbeat(socket, args);
 			} ;
 		}else {
 			System.out.println("Please specify an url");
@@ -56,6 +61,23 @@ public class Clienttest {
 		*  but I haven't seen a specific method for that
 		*
 		*/
+		Integer counter = 0;
+		while(!Thread.currentThread().isInterrupted()) {
+			//byte[] heartbeat = socket.recv();
+			JSONObject heartbeatresp = new JSONObject();
+			counter += 1;
+			//System.out.println("hearbeat received " + counter + heartbeat.toString());
+			socket.send(heartbeatresp.toString());
+			//System.out.println("sent heartbeat");
+			try {
+				Thread.sleep(4000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
+		/*
 		Long time = (long) socket.getHeartbeatTtl();
 		byte[] heartbeat = socket.getHeartbeatContext();
 		while (1 < 2) {
@@ -67,6 +89,7 @@ public class Clienttest {
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 
-}
+
